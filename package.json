@@ -1,61 +1,63 @@
 {
-  "name": "vscode-regexp-preivew",
-  "displayName": "RegExp Preview and Editor",
-  "description": "VSCode extension based on regexper-static",
-  "version": "0.0.3",
-  "publisher": "le0zh",
-  "engines": {
-    "vscode": "^0.10.8"
-  },
-  "galleryBanner": {
-    "color": "#3B3738",
-    "theme": "dark"
-  },
-  "icon": "docs/icon.png",
-  "homepage": "https://github.com/le0zh/vscode-regexp-preivew/blob/master/README.md",
-  "bugs": {
-    "url": "https://github.com/le0zh/vscode-regexp-preivew/issues",
-    "email": "newlight@qq.com"
-  },
-  "repository": {
+	"name": "regex-preview",
+	"displayName": "preview regex",
+	"description": "preview regex in vscode",
+	"keywords": ["vscode", "regexp"],
+	"version": "0.0.1",
+	"publisher": "LouisWT",
+	"engines": {
+		"vscode": "^1.32.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"icon": "images/icon.png",
+	"activationEvents": [
+		"onCommand:extension.previewRegExp",
+		"onCommand:extension.regExpEditor"
+	],
+	"main": "./src/extension.js",
+	"repository": {
     "type": "git",
-    "url": "https://github.com/le0zh/vscode-regexp-preivew.git"
+    "url": "https://github.com/LouisWT/vscode-regexp-preivew.git"
   },
-  "categories": ["Other"],
-  "activationEvents": ["onCommand:extension.showRegexper", "onCommand:extension.regexpEditor"],
-  "main": "./out/src/extension",
-  "contributes": {
-    "commands": [
-      {
-        "command": "extension.showRegexper",
-        "title": "RegExp Preview"
-      },
-      {
-        "command": "extension.regexpEditor",
-        "title": "RegExp Editor"
-      }
-    ],
-    "menus": {
-      "editor/context": [
-        {
-          "when": "editorHasSelection",
-          "command": "extension.showRegexper",
-          "group": "1_modification"
-        }
-      ]
-    }
-  },
-  "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test"
-  },
-  "devDependencies": {
-    "typescript": "^2.0.3",
-    "vscode": "^1.0.0",
-    "mocha": "^2.3.3",
-    "@types/node": "^6.0.40",
-    "@types/mocha": "^2.2.32"
-  }
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.previewRegExp",
+				"title": "RegExp Preview"
+			},
+			{
+				"command": "extension.regExpEditor",
+				"title": "RegExp Editor"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "extension.regExpEditor",
+				"key": "ctrl+f10",
+				"mac": "cmd+f10"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"when": "editorHasSelection",
+					"command": "extension.previewRegExp",
+					"group": "1_modification"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28",
+		"eslint": "^5.13.0",
+		"@types/node": "^10.12.21",
+		"@types/mocha": "^2.2.42"
+	}
 }
