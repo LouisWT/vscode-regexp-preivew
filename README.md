@@ -1,6 +1,6 @@
 # RegExp Preview
 
-[![Marketplace](https://vsmarketplacebadge.apphb.com/version/louiswt.preview-regexp.svg)](https://marketplace.visualstudio.com/items/louiswt.preview-regexp) [![Installs](https://vsmarketplacebadge.apphb.com/installs/louiswt.preview-regexp.svg)](https://marketplace.visualstudio.com/items/louiswt.preview-regexp) [![Ratings](https://vsmarketplacebadge.apphb.com/rating-short/louiswt.preview-regexp.svg)](https://marketplace.visualstudio.com/items/louiswt.preview-regexp)
+[![Marketplace](https://vsmarketplacebadge.apphb.com/version/louiswt.regexp-preview.svg)](https://marketplace.visualstudio.com/items/louiswt.regexp-preview) [![Installs](https://vsmarketplacebadge.apphb.com/installs/louiswt.regexp-preview.svg)](https://marketplace.visualstudio.com/items/louiswt.regexp-preview) [![Ratings](https://vsmarketplacebadge.apphb.com/rating-short/louiswt.regexp-preview.svg)](https://marketplace.visualstudio.com/items/louiswt.regexp-preview)
 
 VSCode extension based on [le0zh.vscode-regexp-preivew](https://marketplace.visualstudio.com/items/le0zh.vscode-regexp-preivew). le0zh.vscode-regexp-preivew use API like vscode.previewHtml which is deprecated. And maintainer have not maintained this repository for two years.I just dont like warning message when i open this extension.
 
