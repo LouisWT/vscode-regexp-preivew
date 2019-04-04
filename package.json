@@ -1,8 +1,8 @@
 {
-	"name": "review-regexp",
+	"name": "regexp-preview",
 	"displayName": "Preview Regexp",
 	"description": "preview regex in vscode",
-	"keywords": ["vscode", "regexp"],
+	"keywords": ["vscode", "regexp", "javascript"],
 	"version": "0.0.1",
 	"publisher": "LouisWT",
 	"engines": {
