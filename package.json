@@ -1,9 +1,9 @@
 {
 	"name": "regexp-preview",
-	"displayName": "Preview Regexp",
+	"displayName": "Regexp Preview",
 	"description": "preview regex in vscode",
 	"keywords": ["vscode", "regexp", "javascript"],
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "LouisWT",
 	"engines": {
 		"vscode": "^1.32.0"
