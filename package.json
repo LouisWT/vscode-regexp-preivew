@@ -1,6 +1,6 @@
 {
-	"name": "regex-preview",
-	"displayName": "preview regex",
+	"name": "review-regexp",
+	"displayName": "Preview Regexp",
 	"description": "preview regex in vscode",
 	"keywords": ["vscode", "regexp"],
 	"version": "0.0.1",
