@@ -8,7 +8,7 @@
 		"javascript"
 	],
 	"license": "MIT",
-	"version": "0.0.2",
+	"version": "0.1.0",
 	"publisher": "LouisWT",
 	"engines": {
 		"vscode": "^1.32.0"
