@@ -1,8 +1,13 @@
 {
-	"name": "regexp-preview",
-	"displayName": "Regexp Preview",
-	"description": "preview regex in vscode",
-	"keywords": ["vscode", "regexp", "javascript"],
+	"name": "regexp-explain",
+	"displayName": "Regexp Explain",
+	"description": "explain regex in vscode",
+	"keywords": [
+		"vscode",
+		"regexp",
+		"javascript"
+	],
+	"license": "MIT",
 	"version": "0.0.2",
 	"publisher": "LouisWT",
 	"engines": {
@@ -13,37 +18,48 @@
 	],
 	"icon": "images/icon.png",
 	"activationEvents": [
-		"onCommand:extension.previewRegExp",
-		"onCommand:extension.regExpEditor"
+		"onCommand:regexExplainer.previewRegExp",
+		"onCommand:regexExplainer.regExpEditor",
+		"onCommand:regexExplainer.getExplainRegexHtml"
 	],
 	"main": "./src/extension.js",
 	"repository": {
-    "type": "git",
-    "url": "https://github.com/LouisWT/vscode-regexp-preivew.git"
-  },
+		"type": "git",
+		"url": "https://github.com/LouisWT/vscode-regexp-preivew.git"
+	},
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.previewRegExp",
-				"title": "RegExp Preview"
+				"command": "regexExplainer.previewRegExp",
+				"title": "RegExp Explain"
 			},
 			{
-				"command": "extension.regExpEditor",
+				"command": "regexExplainer.regExpEditor",
 				"title": "RegExp Editor"
+			},
+			{
+				"command": "regexExplainer.getExplainRegexHtml",
+				"title": "RegExp Get Html"
 			}
 		],
 		"keybindings": [
 			{
-				"command": "extension.regExpEditor",
+				"command": "regexExplainer.regExpEditor",
 				"key": "ctrl+f10",
 				"mac": "cmd+f10"
 			}
 		],
 		"menus": {
+			"commandPalette": [
+				{
+					"command": "regexExplainer.getExplainRegexHtml",
+					"when": "never"
+				}
+			],
 			"editor/context": [
 				{
 					"when": "editorHasSelection",
-					"command": "extension.previewRegExp",
+					"command": "regexExplainer.previewRegExp",
 					"group": "1_modification"
 				}
 			]
@@ -54,10 +70,10 @@
 		"test": "node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.28",
-		"eslint": "^5.13.0",
-		"@types/node": "^10.12.21",
-		"@types/mocha": "^2.2.42"
+		"@types/mocha": "^7.0.2",
+		"@types/node": "^13.9.0",
+		"eslint": "^6.8.0",
+		"typescript": "^3.8.3",
+		"vscode": "^1.1.36"
 	}
 }
