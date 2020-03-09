@@ -3,14 +3,16 @@ const {
 	renderHTML
 } = require('./render');
 
+let panel = null;
+let activeLiveEditorDocument = null;
+let hasLinkedPanel = false;
+
 /**
  * TODO: please translate into plain english, in order to allow more developers to contribute
  * 激活插件时会调用
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-	let panel = null;
-	let activeLiveEditor = null;
 	// 注册命令 extension.showRegExp
 	// 回调中是命令会做的事情
 	// 回调函数的参数
@@ -25,10 +27,11 @@ function activate(context) {
 			return;
 		}
 		let selection = editor.selection;
-		let text = editor.document.getText(selection);
+		const document=editor.document;
+		let text = document.getText(selection);
 		if (!text) return;
 		text = text.trim();
-		let reg = /(?:\b|^|=)\s*new RegExp\s*\(([^,\)]+)(?:,(['"])([^']+)\2)?\);?/;
+		let reg = /(?:\b|^|=)\s*new RegExp\s*\(([^,\)]+)\s*(?:,\s*(['"])([^']+)\2)?\);?/;
 		// new RegExp 形式的正则表达式，那么需要转为 /  / 形式的正则
 		// NEVER DO THIS ! because you can't trust users https://alligator.io/js/eval/
 		// if (reg.test(text)) {
@@ -42,45 +45,57 @@ function activate(context) {
 			}
 		}
 
-		if (!panel) {
+		if (!panel || panel._isDisposed) {
 			panel = createWebviewPanel();
 		}
-		if (panel.lastExplainedEditor && !panel.lastExplainedEditor._disposed) {
-			// todo: strange never called, but the panel remains
-			const closablePanel = panel.lastExplainedEditor;
-			panel.lastExplainedEditor = null;
-			await closeTextEditor(closablePanel);
-			editor.show();
+		if (activeLiveEditorDocument) {
+			hasLinkedPanel = false;
+			await closeEditor(activeLiveEditorDocument);
+			activeLiveEditorDocument = null;
+			await vscode.window.showTextDocument(document);
 		}
 		panel.webview.html = renderHTML(text);
 	});
 
 	const regExpEditor = vscode.commands.registerCommand('regexExplainer.regExpEditor', async function () {
-		if (!activeLiveEditor || activeLiveEditor._disposed)
+		if (activeLiveEditorDocument) {
+			try {
+				// refresh activeLiveEditorDocument (sometimes get disposed)
+				activeLiveEditorDocument = vscode.workspace.textDocuments.find(doc => doc.uri._formatted == activeLiveEditorDocument.uri._formatted);
+				if (!activeLiveEditorDocument)
+					activeLiveEditorDocument = null;
+				else {
+					await vscode.window.showTextDocument(activeLiveEditorDocument);
+					await vscode.commands.executeCommand('editor.action.selectAll');
+				}
+			} catch (err) {
+				vscode.window.showErrorMessage('An error has occurred while refreshing the doc ' + err);
+			}
+		}
+
+		if (!activeLiveEditorDocument) {
 			vscode.workspace.openTextDocument({
-				content: '',
-				language: 'js'
-			})
-			.then((doc) => {
-				return vscode.window.showTextDocument(doc);
-			})
-			.then(() => {
-				let editor = vscode.window.activeTextEditor;
-				if (!editor) {
-					vscode.window.showInformationMessage('Open a file first!')
-					return;
-				}
-				if (!panel || panel._isDisposed) {
-					panel = createWebviewPanel();
-				}
-				activeLiveEditor = editor;
-				let text = editor.document.getText().trim();
-				panel.lastExplainedEditor = editor;
-				panel.webview.html = renderHTML(text);
-			});
-		else if (activeLiveEditor) {
-			activeLiveEditor.show();
-			await vscode.commands.executeCommand('editor.action.selectAll');
+					content: '',
+					language: 'js'
+				})
+				.then((doc) => {
+					activeLiveEditorDocument = doc;
+					return vscode.window.showTextDocument(doc);
+				})
+				.then((editor) => {
+					//let editor = vscode.window.activeTextEditor;
+					if (!editor) {
+						vscode.window.showInformationMessage('Open a file first!')
+						return;
+					}
+					if (!panel || panel._isDisposed) {
+						panel = createWebviewPanel();
+					}
+					//activeLiveEditorDocument = editor.document;
+					hasLinkedPanel = true;
+					let text = activeLiveEditorDocument.getText().trim();
+					panel.webview.html = renderHTML(text);
+				});
 		}
 	})
 
@@ -90,20 +105,21 @@ function activate(context) {
 
 	context.subscriptions.push(previewRegExp, regExpEditor, getExplainRegex,
 		vscode.workspace.onDidChangeTextDocument(function (event) {
-			if (!activeLiveEditor || !panel || !vscode.window.activeTextEditor)
+			if (!activeLiveEditorDocument || !panel)
 				return;
-			if (event.document === activeLiveEditor.document) {
+			if (event.document.uri._formatted === activeLiveEditorDocument.uri._formatted) {
 				let text = event.document.getText().trim();
 				panel.webview.html = renderHTML(text);
 			}
 		}),
 		vscode.workspace.onDidCloseTextDocument(function (closedDocument) {
 			try {
-				if (activeLiveEditor && activeLiveEditor.document === closedDocument) {
-					activeLiveEditor = null;
-					panel.lastExplainedEditor = null;
-					panel.dispose();
-					panel = null;
+				if (activeLiveEditorDocument && activeLiveEditorDocument.uri._formatted === closedDocument.uri._formatted) {
+					activeLiveEditorDocument = null;
+					if (hasLinkedPanel) {
+						panel.dispose();
+						panel = null;
+					}
 				}
 			} catch (err) {
 				vscode.window.showErrorMessage('An error has occurred while closing the editor: ' + err);
@@ -123,20 +139,23 @@ function createWebviewPanel() {
 	);
 	panel.onDidDispose(async (event) => {
 		try {
-			const lastExplainedEditor = panel.lastExplainedEditor;
+			if (activeLiveEditorDocument) {
+				hasLinkedPanel = false;
+				await closeEditor(activeLiveEditorDocument);
+			}
+			/*const lastExplainedEditor = panel.lastExplainedEditor;
 			if (lastExplainedEditor && !lastExplainedEditor._disposed) {
 				closeTextEditor(lastExplainedEditor);
-			}
+			}*/
 		} catch (err) {
 			vscode.window.showErrorMessage('An error has occurred while closing the panel: ' + err);
-
 		}
 	});
 	return panel;
 }
 
-async function closeTextEditor(textEditor) {
-	textEditor.show();
+async function closeEditor(textEditorDocument) {
+	await vscode.window.showTextDocument(textEditorDocument);
 	await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 }
 
