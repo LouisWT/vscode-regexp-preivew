@@ -1,5 +1,5 @@
 {
-	"name": "regexp-explain",
+	"name": "regexp-preview",
 	"displayName": "Regexp Explain",
 	"description": "explain regex in vscode",
 	"keywords": [
